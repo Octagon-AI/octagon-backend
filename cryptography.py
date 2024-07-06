@@ -19,7 +19,6 @@ async def compile_prover(id, shape):
     cal_path = os.path.join('models', id, "calibration.json")
 
 
-
     py_run_args = ezkl.PyRunArgs()
     py_run_args.input_visibility = "private"
     py_run_args.output_visibility = "public"
@@ -109,6 +108,25 @@ async def prove_inference(id, x):
         )
 
     assert res == True
+
+    # GENERATE VERIFIER
+
+    sol_code_path = os.path.join('models', id, 'Verifier.sol')
+    abi_path = os.path.join('models', id, 'Verifier.abi')
+
+    assert os.path.isfile(vk_path)
+    assert os.path.isfile(pk_path)
+
+    res = await ezkl.create_evm_verifier(
+            vk_path,
+            settings_path,
+            sol_code_path,
+            abi_path,
+            srs_path,
+        )
+
+    assert res == True
+    assert os.path.isfile(sol_code_path)
 
     onchain_input_array = []
     for i, value in enumerate(proof["instances"]):
