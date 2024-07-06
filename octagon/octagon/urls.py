@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter
-from backend.views import AIModelViewSet, ProblemViewSet, TypeViewSet
+from backend.views import AIModelViewSet, ProblemViewSet, TypeViewSet, VerifyModel
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -35,7 +35,7 @@ urlpatterns = [
     # Optional UI:
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-
+    path('verify/<int:id>/', VerifyModel.as_view(), name='verify-model'),
 ]
 
 if settings.DEBUG:

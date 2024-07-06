@@ -1,7 +1,0 @@
-openapi: 3.0.3
-info:
-  title: Octagon AI API
-  version: 1.0.0
-  description: API for Octagon AI's backend services.
-paths: {}
-components: {}

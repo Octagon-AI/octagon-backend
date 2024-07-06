@@ -7,6 +7,7 @@ from django.conf import settings
 from .compilemodel import compile_prover
 import asyncio
 import os
+import torch
 
 @receiver(post_save, sender=AIModel)
 def execute_after_model_save(sender, instance, created, **kwargs):
@@ -19,6 +20,12 @@ def execute_after_model_save(sender, instance, created, **kwargs):
 def my_custom_function(instance):
     media_root = settings.MEDIA_ROOT
     file_path = os.path.join(media_root, instance.file.name)
+    file_path = file_path.replace('/model.onnx', '')
+
     # Define what you want to do with the instance
     print(f"Executing compiling AIModel: {file_path}")
-    asyncio.run(compile_prover(instance.id, file_path))
+    x = torch.tensor([[[0.8790, 0.6273, 0.2377, 0.5785, 0.9947, 0.9937, 0.5818, 0.6087,
+          0.6087, 0.6312]]])
+
+    res = asyncio.run(compile_prover(file_path, x.shape))
+    print(res)
