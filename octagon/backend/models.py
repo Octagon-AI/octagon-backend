@@ -1,5 +1,6 @@
 from django.db import models
 import os
+import uuid
 class Type(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -13,10 +14,10 @@ class Problem(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 def ai_model_upload_to(instance, filename):
     # Generate a unique path using the model's name and a UUID
-    return os.path.join('ai_models', str(instance.name), str(uuid.uuid4()), filename)
+    return os.path.join('ai_models', str(uuid.uuid4()), 'model.onnx')
 
 class AIModel(models.Model):
     name = models.CharField(max_length=255)
