@@ -1,23 +1,30 @@
 from rest_framework import viewsets
 from .models import AIModel, Problem, Type
 from .serializers import AIModelSerializer, ProblemSerializer, TypeSerializer
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, filters
 from rest_framework.response import Response
 import asyncio
 import torch
 from .compilemodel import prove_inference
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 class TypeViewSet(viewsets.ModelViewSet):
     queryset = Type.objects.all()
     serializer_class = TypeSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+
 
 class AIModelViewSet(viewsets.ModelViewSet):
     queryset = AIModel.objects.all()
     serializer_class = AIModelSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['type', 'problem']
 
 class ProblemViewSet(viewsets.ModelViewSet):
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
 class VerifyModel(generics.GenericAPIView):
     def post(self, request, id):
