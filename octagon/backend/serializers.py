@@ -2,15 +2,16 @@ from rest_framework import serializers
 from .models import AIModel, Problem, Type
 
 class ProblemSerializer(serializers.ModelSerializer):
-    best_accuracy = serializers.SerializerMethodField()
-    total_models = serializers.SerializerMethodField()
+    best_accuracy = serializers.SerializerMethodField(read_only=True)
+    total_models = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Problem
         fields = '__all__'
 
     def get_best_accuracy(self, obj):
-        return AIModel.objects.filter(problem=obj).order_by('-accuracy').first().accuracy
-
+        if AIModel.objects.filter(problem=obj).count() > 0:
+            return AIModel.objects.filter(problem=obj).order_by('-accuracy')[0].accuracy
+        return 0
     def get_total_models(self, obj):
         return AIModel.objects.filter(problem=obj).count()
 class TypeSerializer(serializers.ModelSerializer):
