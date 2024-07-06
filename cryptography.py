@@ -98,7 +98,7 @@ async def prove_inference(id, x):
             "single",
             srs_path,
         )
-    print(proof)
+    # print(proof)
     assert os.path.isfile(proof_path)
 
     # VERIFY IT
@@ -111,12 +111,20 @@ async def prove_inference(id, x):
         )
 
     assert res == True
-    return {"proof": proof}
+
+    onchain_input_array = []
+    for i, value in enumerate(proof["instances"]):
+        for j, field_element in enumerate(value):
+            onchain_input_array.append(ezkl.felt_to_big_endian(field_element))
+
+    return {"inputs": onchain_input_array, "proof": proof['proof']}
 
 
 if __name__ == '__main__':
-    res = asyncio.run(compile_prover('12345', torch.tensor([[[1., 1., 0., 1., 0., 1., 0., 1., 1.]]]).shape))
+    x = torch.tensor([[[0.8790, 0.6273, 0.2377, 0.5785, 0.9947, 0.9937, 0.5818, 0.6087,
+          0.6087, 0.6312]]])
+    res = asyncio.run(compile_prover('12345', x.shape))
     print(res)
 
-    res = asyncio.run(prove_inference('12345', torch.tensor([[[1., 1., 0., 1., 0., 1., 0., 1., 1.]]])))
+    res = asyncio.run(prove_inference('12345', x))
     print(res)
