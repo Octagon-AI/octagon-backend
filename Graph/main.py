@@ -1,4 +1,6 @@
 from subgrounds import Subgrounds
+import json
+
 
 # Initialize Subgrounds
 sg = Subgrounds()
@@ -24,7 +26,7 @@ POOL_IDS = [
 ]
 POOL_NAMES = ["ETH_USDC_1", "ETH_USDT_1", "ETH_WBTC"]
 
-DURATION_DAYS = 10
+DURATION_DAYS = 100
 
 for pool_id, pool_name in zip(POOL_IDS, POOL_NAMES):
     pool_query = uniswap_v3.Query.pools(
@@ -57,10 +59,33 @@ for pool_id, pool_name in zip(POOL_IDS, POOL_NAMES):
         ]
     )
 
-    # print(pool_name)
-    print(day_query_result["pools_poolDayData_feesUSD"])
-    print(day_query_result["pools_poolDayData_high"])
-    print(day_query_result["pools_poolDayData_low"])
-    print("\n====================\n")
+    day_query_result.drop(columns=["pools_id"], inplace=True)
+    day_query_result.drop(columns=["pools_feeTier"], inplace=True)
 
-    # # MSE = |high-P_high| + |low-P_low| + |fee - P_fee|
+    # Rename the fields
+    day_query_result.rename(columns={
+        "pools_poolDayData_feesUSD": "feesUSD",
+        "pools_poolDayData_date": "date",
+        "pools_poolDayData_liquidity": "liquidity",
+        "pools_poolDayData_sqrtPrice": "sqrtPrice",
+        "pools_poolDayData_token0Price": "token0Price",
+        "pools_poolDayData_token1Price": "token1Price",
+        "pools_poolDayData_feeGrowthGlobal0X128": "feeGrowthGlobal0X128",
+        "pools_poolDayData_feeGrowthGlobal1X128": "feeGrowthGlobal1X128",
+        "pools_poolDayData_volumeToken0": "volumeToken0",
+        "pools_poolDayData_volumeToken1": "volumeToken1",
+        "pools_poolDayData_volumeUSD": "volumeUSD",
+        "pools_poolDayData_txCount": "txCount",
+        "pools_poolDayData_open": "open",
+        "pools_poolDayData_high": "high",
+        "pools_poolDayData_low": "low",
+        "pools_poolDayData_close": "close"
+    }, inplace=True)
+
+    # Convert dataframe to dictionary
+    data_dict = day_query_result.to_dict(orient='list')
+
+    # Save dictionary to JSON file
+    with open(f"poolData/{pool_name}.json", 'w') as f:
+        json.dump(data_dict, f)
+
