@@ -16,6 +16,8 @@ async def compile_prover(id, shape):
     data_path = os.path.join('models', id, 'input.json')
     srs_path = os.path.join('models', id, 'kzg.srs')
     proof_path = os.path.join('models', id, 'test.pf')
+    cal_path = os.path.join('models', id, "calibration.json")
+
 
 
     py_run_args = ezkl.PyRunArgs()
@@ -26,7 +28,6 @@ async def compile_prover(id, shape):
     res = ezkl.gen_settings(model_path, settings_path, py_run_args=py_run_args)
     assert res == True
 
-    cal_path = os.path.join("calibration.json")
     data_array = (torch.rand(20, *shape, requires_grad=True).detach().numpy()).reshape([-1]).tolist()
     data = dict(input_data = [data_array])
     json.dump(data, open(cal_path, 'w'))
@@ -85,9 +86,6 @@ async def prove_inference(id, x):
     assert os.path.isfile(pk_path)
     assert os.path.isfile(settings_path)
     assert os.path.isfile(srs_path)
-
-
-    proof_path = os.path.join('test.pf')
 
     proof = ezkl.prove(
             witness_path,
