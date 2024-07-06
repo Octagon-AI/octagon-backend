@@ -30,6 +30,6 @@ class AIModel(models.Model):
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE, null=True)
     type = models.ForeignKey(Type, on_delete=models.CASCADE, null=True)
     file = models.FileField(upload_to=ai_model_upload_to, blank=True, null=True)  # Added FileField
-
+    accuracy = models.FloatField(null=True)
     def __str__(self):
         return self.name
