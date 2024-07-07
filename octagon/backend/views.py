@@ -26,13 +26,31 @@ class ProblemViewSet(viewsets.ModelViewSet):
     serializer_class = ProblemSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
-class VerifyModel(generics.GenericAPIView):
-    def post(self, request, id):
-        x = torch.tensor([[[0.8790, 0.6273, 0.2377, 0.5785, 0.9947, 0.9937, 0.5818, 0.6087,
-                            0.6087, 0.6312]]])
-        model = AIModel.objects.get(id=id)
-        model_path = model.file.path
-        model_path = model_path.replace('/model.onnx', '')
-        res = asyncio.run(prove_inference(model_path, x))
-        return Response({"result": res})
 
+from .serializers import VerifyModelSerializer
+from rest_framework import status
+from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+
+class VerifyModel(generics.GenericAPIView):
+    serializer_class = VerifyModelSerializer
+
+    @swagger_auto_schema(request_body=VerifyModelSerializer)
+    def post(self, request, id):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            x_list = serializer.validated_data['x']
+
+            # Convert the list of floats to a tensor
+            x = torch.tensor([[x_list]])
+            if x.shape != torch.Size([1,1,10]):
+                return Response({"error": "Input shape must be (10)"}, status=status.HTTP_400_BAD_REQUEST)
+
+            model = AIModel.objects.get(id=id)
+            model_path = model.file.path
+            model_path = model_path.replace('/model.onnx', '')
+            res = asyncio.run(prove_inference(model_path, x))
+
+            return Response({"result": res, "x": x_list})
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
