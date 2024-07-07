@@ -38,6 +38,8 @@ urlpatterns = [
     path('verify/<int:id>', VerifyModel.as_view(), name='verify-model'),
     path('evaluate/<int:id>', EvaluateModel.as_view(), name='evaluate-model'),
     path('deploy/<int:id>', DeployModel.as_view(), name='deploy-model'),
+    path('api/verify/<int:id>', VerifyModel.as_view(), name='verify-model'),
+    path('api/evaluate/<int:id>', EvaluateModel.as_view(), name='evaluate-model'),
 ]
 
 if settings.DEBUG:
