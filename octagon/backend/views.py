@@ -6,7 +6,13 @@ from rest_framework.response import Response
 import asyncio
 import torch
 from .compilemodel import prove_inference
+from .evaluate_model import evaluate_model
 from django_filters.rest_framework import DjangoFilterBackend
+from .serializers import VerifyModelSerializer
+from rest_framework import status
+from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from .models import ModelEvaluation
 
 
 class TypeViewSet(viewsets.ModelViewSet):
@@ -25,12 +31,6 @@ class ProblemViewSet(viewsets.ModelViewSet):
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-
-
-from .serializers import VerifyModelSerializer
-from rest_framework import status
-from rest_framework.response import Response
-from drf_yasg.utils import swagger_auto_schema
 
 class VerifyModel(generics.GenericAPIView):
     serializer_class = VerifyModelSerializer
@@ -54,3 +54,25 @@ class VerifyModel(generics.GenericAPIView):
             return Response({"result": res, "x": x_list})
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class EvaluateModel(generics.GenericAPIView):
+    def post(self, request, id):
+        model = AIModel.objects.get(id=id)
+        model_path = model.file.path
+        model_path = model_path.replace('/model.onnx', '')
+        res = evaluate_model(model_path, "ETH_USDC_1.json")
+
+        # add evaluation to the database as ModelEvaluation
+        model_evaluation = ModelEvaluation.objects.create(
+            model=model,
+            feesMse=res['mse_feesUSD'],
+            feesMae=res['mae_feesUSD'],
+            highMse=res['mse_high'],
+            highMae=res['mae_high'],
+            lowMse=res['mse_low'],
+            lowMae=res['mae_low']
+        )
+        model_evaluation.save()
+
+        return Response({"result": res})

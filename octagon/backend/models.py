@@ -36,8 +36,12 @@ class AIModel(models.Model):
 
 class ModelEvaluation(models.Model):
     model = models.ForeignKey(AIModel, on_delete=models.CASCADE)
-    mse = models.FloatField()
-    mae = models.FloatField()
+    feesMse = models.FloatField(default=0.0)
+    feesMae = models.FloatField(default=0.0)
+    highMse = models.FloatField(default=0.0)
+    highMae = models.FloatField(default=0.0)
+    lowMse = models.FloatField(default=0.0)
+    lowMae = models.FloatField(default=0.0)
     timestamp = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f'{self.model.name} - {self.accuracy}'
