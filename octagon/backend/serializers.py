@@ -20,6 +20,18 @@ class TypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AIModelSerializer(serializers.ModelSerializer):
+    problem_name = serializers.SerializerMethodField(read_only=True)
+    type_name = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = AIModel
         fields = '__all__'
+
+    def get_problem_name(self, obj):
+        if obj.problem is None:
+            return None
+        return obj.problem.name
+
+    def get_type_name(self, obj):
+        if obj.type is None:
+            return None
+        return obj.type.name
