@@ -136,8 +136,7 @@ async def prove_inference(id, x):
 
 
 if __name__ == '__main__':
-    x = torch.tensor([[[0.8790, 0.6273, 0.2377, 0.5785, 0.9947, 0.9937, 0.5818, 0.6087,
-                        0.6087, 0.6312]]])
+    x = torch.tensor([[[0.8790, 0.6273, 0.2377, 0.5785, 0.9947, 0.9937, 0.5818, 0.6087, 0.6087, 0.6312]]])
     res = asyncio.run(compile_prover('12345', x.shape))
     print(res)
 

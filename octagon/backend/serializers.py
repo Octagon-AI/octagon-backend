@@ -23,3 +23,6 @@ class AIModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = AIModel
         fields = '__all__'
+
+class VerifyModelSerializer(serializers.Serializer):
+    x = serializers.ListField(child=serializers.FloatField(), required=True)
