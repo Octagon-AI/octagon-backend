@@ -13,7 +13,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from .models import ModelEvaluation
-
+import os
 
 class TypeViewSet(viewsets.ModelViewSet):
     queryset = Type.objects.all()
@@ -76,3 +76,24 @@ class EvaluateModel(generics.GenericAPIView):
         model_evaluation.save()
 
         return Response({"result": res})
+
+
+class DeployModel(generics.GenericAPIView):
+    def post(self, request, id):
+        model = AIModel.objects.get(id=id)
+        model_path = model.file.path
+        model_path = model_path.replace('/model.onnx', '')
+
+        print("DELAAAAM", model_path)
+        print("PATH", os.getcwd())
+        # copy model to the deployment directory
+        os.system(f"cp {model_path}/Verifier.sol ../deployer")
+        res = os.popen(f"cd ../deployer && python main.py")
+        rez = res.read()
+        import re
+        match = re.search(r"0x[a-fA-F0-9]{40}", rez)
+        print("MATCH", match)
+
+        # print("RESS ",rez, "RESS end")
+
+        return Response({"deployed": match.group(0)})
