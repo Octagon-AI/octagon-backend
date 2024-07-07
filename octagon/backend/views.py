@@ -90,6 +90,7 @@ class DeployModel(generics.GenericAPIView):
         os.system(f"cp {model_path}/Verifier.sol ../deployer")
         res = os.popen(f"cd ../deployer && python main.py")
         rez = res.read()
+        print(rez)
         import re
         match = re.search(r"0x[a-fA-F0-9]{40}", rez)
         print("MATCH", match)

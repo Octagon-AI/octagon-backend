@@ -1,6 +1,10 @@
 import os
 from dotenv import load_dotenv
 
+ETHERSCAN_API_KEY = 'N8SP1UH648EFP6486Y2KZA8DYQPU3Y7RRM'
+PRIVATE_KEY = '0x6ce33f56575ff4bad9cd94f1d9bd22bb54eb4061a54bf0889a7af1e6f65619a1'
+RPC_URL = 'https://sepolia.rpc.thirdweb.com/'
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -38,7 +42,7 @@ def copy_files(to_dir):
 def deploy_contract(to_dir):
     try:
 
-        command = f"cd {to_dir} && forge create --rpc-url {os.getenv('RPC_URL')} --private-key {os.getenv('PRIVATE_KEY')} src/Verifier.sol:Halo2Verifier"
+        command = f"cd {to_dir} && forge create --rpc-url {RPC_URL} --private-key {PRIVATE_KEY} src/Verifier.sol:Halo2Verifier"
         
 
         # Run the command
@@ -65,7 +69,7 @@ def deploy_contract(to_dir):
 
 def verify_contract(to_dir, contract_address):
     try:
-        command = f"cd {to_dir} && forge verify-contract --chain-id 11155111 --watch --etherscan-api-key {os.getenv('ETHERSCAN_API_KEY')} {contract_address} src/Verifier.sol:Halo2Verifier"
+        command = f"cd {to_dir} && forge verify-contract --chain-id 11155111 --watch --etherscan-api-key {ETHERSCAN_API_KEY} {contract_address} src/Verifier.sol:Halo2Verifier"
         
         # Run the command
         result = subprocess.run(
