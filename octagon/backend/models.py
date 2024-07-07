@@ -36,11 +36,8 @@ class AIModel(models.Model):
 
 class ModelEvaluation(models.Model):
     model = models.ForeignKey(AIModel, on_delete=models.CASCADE)
-    m1 = models.FloatField()
-    m2 = models.FloatField()
-    m3 = models.FloatField()
-    m4 = models.FloatField()
-    m5 = models.FloatField()
+    mse = models.FloatField()
+    mae = models.FloatField()
     timestamp = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f'{self.model.name} - {self.accuracy}'
