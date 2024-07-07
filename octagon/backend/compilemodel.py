@@ -21,13 +21,13 @@ async def compile_prover(id, shape):
     py_run_args = ezkl.PyRunArgs()
     py_run_args.input_visibility = "private"
     py_run_args.output_visibility = "public"
-    py_run_args.param_visibility = "private"  # private by default
+    py_run_args.param_visibility = "private" # private by default
 
     res = ezkl.gen_settings(model_path, settings_path, py_run_args=py_run_args)
     assert res == True
 
     data_array = (torch.rand(20, *shape, requires_grad=True).detach().numpy()).reshape([-1]).tolist()
-    data = dict(input_data=[data_array])
+    data = dict(input_data = [data_array])
     json.dump(data, open(cal_path, 'w'))
 
     await ezkl.calibrate_settings(cal_path, model_path, settings_path, "resources")
@@ -73,11 +73,11 @@ async def prove_inference(id, x):
     assert os.path.isfile(witness_path)
 
     res = ezkl.setup(
-        compiled_model_path,
-        vk_path,
-        pk_path,
-        srs_path,
-    )
+            compiled_model_path,
+            vk_path,
+            pk_path,
+            srs_path,
+        )
 
     assert res == True
     assert os.path.isfile(vk_path)
@@ -85,30 +85,47 @@ async def prove_inference(id, x):
     assert os.path.isfile(settings_path)
     assert os.path.isfile(srs_path)
 
-    proof_path = os.path.join('test.pf')
-
     proof = ezkl.prove(
-        witness_path,
-        compiled_model_path,
-        pk_path,
-        proof_path,
+            witness_path,
+            compiled_model_path,
+            pk_path,
+            proof_path,
 
-        "single",
-        srs_path,
-    )
+            "single",
+            srs_path,
+        )
     # print(proof)
     assert os.path.isfile(proof_path)
 
     # VERIFY IT
 
     res = ezkl.verify(
-        proof_path,
-        settings_path,
-        vk_path,
-        srs_path,
-    )
+            proof_path,
+            settings_path,
+            vk_path,
+            srs_path,
+        )
 
     assert res == True
+
+    # GENERATE VERIFIER
+
+    sol_code_path = os.path.join(id, 'Verifier.sol')
+    abi_path = os.path.join(id, 'Verifier.abi')
+
+    assert os.path.isfile(vk_path)
+    assert os.path.isfile(pk_path)
+
+    res = await ezkl.create_evm_verifier(
+            vk_path,
+            settings_path,
+            sol_code_path,
+            abi_path,
+            srs_path,
+        )
+
+    assert res == True
+    assert os.path.isfile(sol_code_path)
 
     onchain_input_array = []
     for i, value in enumerate(proof["instances"]):
