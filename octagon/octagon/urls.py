@@ -35,8 +35,8 @@ urlpatterns = [
     # Optional UI:
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('verify/<int:id>', VerifyModel.as_view(), name='verify-model'),
-    path('evaluate/<int:id>', EvaluateModel.as_view(), name='evaluate-model'),
+    path('api/verify/<int:id>', VerifyModel.as_view(), name='verify-model'),
+    path('api/evaluate/<int:id>', EvaluateModel.as_view(), name='evaluate-model'),
 ]
 
 if settings.DEBUG:
