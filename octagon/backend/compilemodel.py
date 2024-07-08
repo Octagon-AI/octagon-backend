@@ -39,6 +39,10 @@ async def compile_prover(id, shape):
     res = await ezkl.get_srs(settings_path=settings_path, srs_path=srs_path)
     assert res == True
 
+
+    x = torch.tensor([[[0.8790, 0.6273, 0.2377, 0.5785, 0.9947, 0.9937, 0.5818, 0.6087, 0.6087, 0.6312]]])
+    await prove_inference(id, x)
+
     return "Model compiled"
 
 
@@ -136,9 +140,10 @@ async def prove_inference(id, x):
 
 
 if __name__ == '__main__':
+    # print("PWD", os.getcwd())
     x = torch.tensor([[[0.8790, 0.6273, 0.2377, 0.5785, 0.9947, 0.9937, 0.5818, 0.6087, 0.6087, 0.6312]]])
-    res = asyncio.run(compile_prover('12345', x.shape))
+    res = asyncio.run(compile_prover('../media/ai_models/Test6-20240708_185417', x.shape))
     print(res)
 
-    res = asyncio.run(prove_inference('12345', x))
+    res = asyncio.run(prove_inference('../media/ai_models/Test6-20240708_185417', x))
     print(res)

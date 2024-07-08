@@ -84,8 +84,8 @@ class DeployModel(generics.GenericAPIView):
         model_path = model.file.path
         model_path = model_path.replace('/model.onnx', '')
 
-        print("DELAAAAM", model_path)
-        print("PATH", os.getcwd())
+        # print("DELAAAAM", model_path)
+        # print("PATH", os.getcwd())
         # copy model to the deployment directory
         os.system(f"cp {model_path}/Verifier.sol ../deployer")
         res = os.popen(f"cd ../deployer && python main.py")
@@ -93,8 +93,8 @@ class DeployModel(generics.GenericAPIView):
         print(rez)
         import re
         match = re.search(r"0x[a-fA-F0-9]{40}", rez)
-        print("MATCH", match)
+        # print("MATCH", match)
 
         # print("RESS ",rez, "RESS end")
 
-        return Response({"deployed": match.group(0)})
+        return Response({"verifierAddress": match.group(0)})

@@ -214,7 +214,7 @@ contract Halo2Verifier {
 
             {
                 // Load vk_digest and num_instances of vk into memory
-                mstore(0x05a0, 0x0acc1adc2bf3fa952b8c8dd1ed65e4c17ae8b498a279b94921ec18f0149372c1) // vk_digest
+                mstore(0x05a0, 0x20383535a5435dfebd1eb62c2f6bbc9c718f9d94239718983150a3ec6d5a1b62) // vk_digest
                 mstore(0x05c0, 0x0000000000000000000000000000000000000000000000000000000000000003) // num_instances
 
                 // Check valid length of proof
@@ -314,7 +314,7 @@ contract Halo2Verifier {
                 success, proof_cptr, hash_mptr := read_ec_point(success, proof_cptr, hash_mptr, q) // W'
 
                 // Load full vk into memory
-                mstore(0x05a0, 0x0acc1adc2bf3fa952b8c8dd1ed65e4c17ae8b498a279b94921ec18f0149372c1) // vk_digest
+                mstore(0x05a0, 0x20383535a5435dfebd1eb62c2f6bbc9c718f9d94239718983150a3ec6d5a1b62) // vk_digest
                 mstore(0x05c0, 0x0000000000000000000000000000000000000000000000000000000000000003) // num_instances
                 mstore(0x05e0, 0x000000000000000000000000000000000000000000000000000000000000000e) // k
                 mstore(0x0600, 0x30638ce1a7661b6337a964756aa75257c6bf4778d89789ab819ce60c19b04001) // n_inv
@@ -337,22 +337,22 @@ contract Halo2Verifier {
                 mstore(0x0820, 0x06ecdb9f9567f59ed2eee36e1e1d58797fd13cc97fafc2910f5e8a12f202fa9a) // neg_s_g2_y_2
                 mstore(0x0840, 0x035d1f2252469917de668a4b87e31d8ccfc6075bac76821db7de1292649b18a0) // fixed_comms[0].x
                 mstore(0x0860, 0x13f72272e51c0b5626a67ccd2d3e15bb9f40fd7a20993f2832f592eea2bd990e) // fixed_comms[0].y
-                mstore(0x0880, 0x04034b133f7332da3db2709afa048b98d2471b3886a906eaa81c4c58ed5ae948) // fixed_comms[1].x
-                mstore(0x08a0, 0x10629b09accd418d0fbfe76b15c07f22a50b29c7d133b7f9f4da141611cba81e) // fixed_comms[1].y
-                mstore(0x08c0, 0x2fb825780c71d9910b21624feeb3ca73b770eb64c2d37ea874df001d35a37fcb) // fixed_comms[2].x
-                mstore(0x08e0, 0x29449de2a93b535079b9ff71d4c4854bb97f8b356da38e7af743b06c23aed3da) // fixed_comms[2].y
-                mstore(0x0900, 0x09738c90d7a53f2be381f92c73e13f8b69f060f34cd0683940a28b0ad0473a9a) // fixed_comms[3].x
-                mstore(0x0920, 0x1c5aac162e0c78394ac7d7248d5b97ad3fa3f0c16994447bf0a0ef1aa309da30) // fixed_comms[3].y
+                mstore(0x0880, 0x2a8d993bfdef590aca70c151e67421c6634c67c957a778a8ae7821a4b8846986) // fixed_comms[1].x
+                mstore(0x08a0, 0x2f145cef0c04e8a8cb8882f4a8596e731c2b44704f9162952ca8143ed0fa5e24) // fixed_comms[1].y
+                mstore(0x08c0, 0x10b27df62a7f035d315129b423d1b2aed0433ccf6e3110a586e313d07da91b58) // fixed_comms[2].x
+                mstore(0x08e0, 0x1211854c13bd619c445eb68662d18d4214bffc47c62fb40c0bb4f9c402b46dd3) // fixed_comms[2].y
+                mstore(0x0900, 0x10bd5c7e7c7cd14818ebcbfa26cbab9cfc2e8be971aecbc7ac76936e79a52dc2) // fixed_comms[3].x
+                mstore(0x0920, 0x0492b381c60588dac3d81047e046b6258cb0a63d5d4d7a99e62b32f43a386d60) // fixed_comms[3].y
                 mstore(0x0940, 0x020ee6e5197e4847921ca42690a7695d57c77b79c8f328300f515a09e942dbe3) // fixed_comms[4].x
                 mstore(0x0960, 0x1810128cb771b5fda38c65569f62a0722c00d0268bf2162113ef9034e9845361) // fixed_comms[4].y
-                mstore(0x0980, 0x1dc85d230010843fc3036ac23e5b339669814e34751db692f017ee06ebfa43c4) // fixed_comms[5].x
-                mstore(0x09a0, 0x1afec179ac2abbce0d0163397f644816ebfaecb766797192150540a3bee5a1f1) // fixed_comms[5].y
-                mstore(0x09c0, 0x0e837110422b2c443491727eee755bd85a18cf0f86ee8235bb55f900461ff53b) // fixed_comms[6].x
-                mstore(0x09e0, 0x02373192b6c934daf690d52d9fd145cd9eb524549c692648d1a5b9704c2d7a54) // fixed_comms[6].y
-                mstore(0x0a00, 0x0ce8337d4826e35a2093f1661e69bf8b4fb2830b6c800acfe56d306b2c632792) // fixed_comms[7].x
-                mstore(0x0a20, 0x207dd5af93b9e900d9ce4dc8901a75b903ffdd92b617fba91582231d53b405c6) // fixed_comms[7].y
-                mstore(0x0a40, 0x19db2a6f398d3bcc8a7cbce0f3c665ef902475b9e37f9121ae1573acd3d6c935) // fixed_comms[8].x
-                mstore(0x0a60, 0x1ee2caf90dc5b3a6b417e852b2839095f5aadfc4c2734348e9544630ee5927d7) // fixed_comms[8].y
+                mstore(0x0980, 0x0ce8337d4826e35a2093f1661e69bf8b4fb2830b6c800acfe56d306b2c632792) // fixed_comms[5].x
+                mstore(0x09a0, 0x207dd5af93b9e900d9ce4dc8901a75b903ffdd92b617fba91582231d53b405c6) // fixed_comms[5].y
+                mstore(0x09c0, 0x19db2a6f398d3bcc8a7cbce0f3c665ef902475b9e37f9121ae1573acd3d6c935) // fixed_comms[6].x
+                mstore(0x09e0, 0x1ee2caf90dc5b3a6b417e852b2839095f5aadfc4c2734348e9544630ee5927d7) // fixed_comms[6].y
+                mstore(0x0a00, 0x1dc85d230010843fc3036ac23e5b339669814e34751db692f017ee06ebfa43c4) // fixed_comms[7].x
+                mstore(0x0a20, 0x1afec179ac2abbce0d0163397f644816ebfaecb766797192150540a3bee5a1f1) // fixed_comms[7].y
+                mstore(0x0a40, 0x0e837110422b2c443491727eee755bd85a18cf0f86ee8235bb55f900461ff53b) // fixed_comms[8].x
+                mstore(0x0a60, 0x02373192b6c934daf690d52d9fd145cd9eb524549c692648d1a5b9704c2d7a54) // fixed_comms[8].y
                 mstore(0x0a80, 0x2bd43c8839ac3c876999807f92af6df51a27679cc95d5d0cf9ed326f8df1c84c) // fixed_comms[9].x
                 mstore(0x0aa0, 0x14b40d8c4d5e3054c7609b9677f906cdb3890f3314fb3f338ff144c0ee872139) // fixed_comms[9].y
                 mstore(0x0ac0, 0x202f5c0bd257a9a08ec1c432abaedcaa70ac2f6f56dba3307bb13bef7c144e90) // fixed_comms[10].x
@@ -884,12 +884,12 @@ contract Halo2Verifier {
                         let var2 := mulmod(var1, a_0, r)
                         let var3 := sub(r, var1)
                         let var4 := addmod(var0, var3, r)
-                        let var5 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff0f9
+                        let var5 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff0f1
                         let var6 := mulmod(var4, var5, r)
                         let var7 := addmod(var2, var6, r)
                         let a_4 := calldataload(0x0764)
                         let var8 := mulmod(var1, a_4, r)
-                        let var9 := 0x10f
+                        let var9 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff85e
                         let var10 := mulmod(var4, var9, r)
                         let var11 := addmod(var8, var10, r)
                         input_0 := var7
@@ -937,12 +937,12 @@ contract Halo2Verifier {
                         let var2 := mulmod(var1, a_1, r)
                         let var3 := sub(r, var1)
                         let var4 := addmod(var0, var3, r)
-                        let var5 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff0f9
+                        let var5 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff0f1
                         let var6 := mulmod(var4, var5, r)
                         let var7 := addmod(var2, var6, r)
                         let a_5 := calldataload(0x0784)
                         let var8 := mulmod(var1, a_5, r)
-                        let var9 := 0x10f
+                        let var9 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff85e
                         let var10 := mulmod(var4, var9, r)
                         let var11 := addmod(var8, var10, r)
                         input_0 := var7
@@ -990,12 +990,12 @@ contract Halo2Verifier {
                         let var2 := mulmod(var1, a_0, r)
                         let var3 := sub(r, var1)
                         let var4 := addmod(var0, var3, r)
-                        let var5 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff0f9
+                        let var5 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff0f1
                         let var6 := mulmod(var4, var5, r)
                         let var7 := addmod(var2, var6, r)
                         let a_4 := calldataload(0x0764)
                         let var8 := mulmod(var1, a_4, r)
-                        let var9 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff85e
+                        let var9 := 0x10e
                         let var10 := mulmod(var4, var9, r)
                         let var11 := addmod(var8, var10, r)
                         input_0 := var7
@@ -1043,12 +1043,12 @@ contract Halo2Verifier {
                         let var2 := mulmod(var1, a_1, r)
                         let var3 := sub(r, var1)
                         let var4 := addmod(var0, var3, r)
-                        let var5 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff0f9
+                        let var5 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff0f1
                         let var6 := mulmod(var4, var5, r)
                         let var7 := addmod(var2, var6, r)
                         let a_5 := calldataload(0x0784)
                         let var8 := mulmod(var1, a_5, r)
-                        let var9 := 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593effff85e
+                        let var9 := 0x10e
                         let var10 := mulmod(var4, var9, r)
                         let var11 := addmod(var8, var10, r)
                         input_0 := var7
