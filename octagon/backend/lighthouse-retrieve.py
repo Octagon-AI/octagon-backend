@@ -1,8 +1,10 @@
 import io
 import os
 from lighthouseweb3 import Lighthouse
-os.environ['LIGHTHOUSE_API_KEY'] = 'f9aa7723.749dd94a4bad4392a947dc5aed3c24db'
+# os.environ['LIGHTHOUSE_API_KEY'] = 'f9aa7723.749dd94a4bad4392a947dc5aed3c24db'
+from dotenv import load_dotenv
 
+load_dotenv()
 
 # Get the API token from the environment variable
 api_token = os.getenv('LIGHTHOUSE_API_KEY')
