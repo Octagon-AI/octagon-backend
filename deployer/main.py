@@ -19,10 +19,10 @@ import re
 # result = subprocess.run(["ls"], capture_output=True, text=True)
 
 
-def copy_files():
+def copy_files(to_dir):
     try:
         _result = subprocess.run(
-            ["cp", "Verifier.sol", "../forge-deployer/src"],
+            ["cp", "Verifier.sol", f"{to_dir}/src"],
             check=True,
             capture_output=True,
             text=True,
@@ -34,39 +34,10 @@ def copy_files():
         print(f"Error message: {e.stderr}")
 
 
-def change_cwd(to_dir):
-    try:
-        result = subprocess.run(
-            [],
-            shell=True,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-
-    except subprocess.CalledProcessError as e:
-        print(f"Command failed with return code {e.returncode}")
-        print(f"Error message: {e.stderr}")
-
 
 def deploy_contract(to_dir):
     try:
 
-        # # Run the command
-        # command = [
-        #     f"cd {to_dir} &&",
-        #     "forge",
-        #     "create",
-        #     "--rpc-url",
-        #     os.getenv("RPC_URL"),
-        #     "--private-key",
-        #     os.getenv("PRIVATE_KEY"),
-        #     "--etherscan-api-key",
-        #     os.getenv("ETHERSCAN_API_KEY"),
-        #     "--verify",
-        #     "src/Verifier.sol:Halo2Verifier",
-        # ]
-        
         command = f"cd {to_dir} && forge create --rpc-url {os.getenv("RPC_URL")} --private-key {os.getenv("PRIVATE_KEY")} src/Verifier.sol:Halo2Verifier"
         
 
@@ -112,6 +83,9 @@ def verify_contract(to_dir, contract_address):
 
 
 if __name__ == "__main__":
-    copy_files()
-    deployed_address =  deploy_contract("../forge-deployer")
-    verify_contract("../forge-deployer", deployed_address)
+
+    to_dir = "deployer-env"
+    
+    copy_files(to_dir)
+    deployed_address =  deploy_contract(to_dir)
+    verify_contract(to_dir, deployed_address)
