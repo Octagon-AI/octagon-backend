@@ -1,132 +1,80 @@
+from flask import Flask, request
 import os
 import torch
-import json
-import torch.nn as nn
-import ezkl
 import asyncio
+import cryptography
 
 
-async def compile_prover(id, shape):
-    model_path = os.path.join("models", id, "model.onnx")
-    compiled_model_path = os.path.join("models", id, "model.compiled")
-    pk_path = os.path.join("models", id, "test.pk")
-    vk_path = os.path.join("models", id, "test.vk")
-    settings_path = os.path.join("models", id, "settings.json")
-    witness_path = os.path.join("models", id, "witness.json")
-    data_path = os.path.join("models", id, "input.json")
-    srs_path = os.path.join("models", id, "kzg.srs")
-    proof_path = os.path.join("models", id, "test.pf")
+app = Flask(__name__)
 
-    py_run_args = ezkl.PyRunArgs()
-    py_run_args.input_visibility = "private"
-    py_run_args.output_visibility = "public"
-    py_run_args.param_visibility = "private"  # private by default
+# Define the folder to store uploaded files
+UPLOAD_FOLDER = "models"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-    res = ezkl.gen_settings(model_path, settings_path, py_run_args=py_run_args)
-    assert res == True
-
-    cal_path = os.path.join("calibration.json")
-    data_array = (
-        (torch.rand(20, *shape, requires_grad=True).detach().numpy())
-        .reshape([-1])
-        .tolist()
-    )
-    data = dict(input_data=[data_array])
-    json.dump(data, open(cal_path, "w"))
-
-    await ezkl.calibrate_settings(cal_path, model_path, settings_path, "resources")
-
-    res = ezkl.compile_circuit(model_path, compiled_model_path, settings_path)
-    assert res == True
-
-    # srs path
-    res = await ezkl.get_srs(settings_path=settings_path, srs_path=srs_path)
-    assert res == True
-
-    return "Model compiled"
+# Ensure the upload folder exists
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 
-async def prove_inference(id, x):
-    # raw_model_path = os.path.join("models", id, "model.pth")
-    # if not os.path.exists(raw_model_path):
-    #     return 'Model not found'
+def check_extensoin(filename, extensions):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in extensions
 
-    # print("path", raw_model_path)
 
-    # import pickle
-    # circuit = dill.load(open("models/12345/model.pkl", 'rb'))
-    # circuit = torch.load(raw_model_path)
+@app.route("/upload_model", methods=["POST"])
+def upload_model():
+    print("files", request.files)
+    if "model_onnx" not in request.files:
+        return "No file part"
 
-    model_path = os.path.join("models", id, "model.onnx")
-    compiled_model_path = os.path.join("models", id, "model.compiled")
-    pk_path = os.path.join("models", id, "test.pk")
-    vk_path = os.path.join("models", id, "test.vk")
-    settings_path = os.path.join("models", id, "settings.json")
-    witness_path = os.path.join("models", id, "witness.json")
-    data_path = os.path.join("models", id, "input.json")
-    srs_path = os.path.join("models", id, "kzg.srs")
-    proof_path = os.path.join("models", id, "test.pf")
+    model_onnx = request.files["model_onnx"]
+    if model_onnx.filename == "":
+        return "No ONNX model selected"
 
-    data_array = ((x.squeeze(1)).detach().numpy()).reshape([-1]).tolist()
-    data = dict(input_data=[data_array])
+    if "id" not in request.form:
+        return "No ID part"
+    id = request.form["id"]
+    if not id.isdigit():
+        return "ID must be a number"
 
-    # Serialize data into file:
-    json.dump(data, open(data_path, "w"))
+    id_folder = os.path.join(app.config["UPLOAD_FOLDER"], id)
+    if os.path.exists(id_folder):
+        return f"ID {id} already exists"
+    else:
+        os.makedirs(id_folder)
 
-    res = await ezkl.gen_witness(data_path, compiled_model_path, witness_path)
-    assert os.path.isfile(witness_path)
+    if model_onnx and check_extensoin(model_onnx.filename, {"onnx"}):
+        model_onnx.save(os.path.join(id_folder, "model.onnx"))
+        return f"File successfully uploaded with ID: {id}"
+    return "Invalid file extensions"
 
-    res = ezkl.setup(
-        compiled_model_path,
-        vk_path,
-        pk_path,
-        srs_path,
-    )
 
-    assert res == True
-    assert os.path.isfile(vk_path)
-    assert os.path.isfile(pk_path)
-    assert os.path.isfile(settings_path)
-    assert os.path.isfile(srs_path)
+@app.route("/list_models", methods=["GET"])
+def list_models():
+    models = os.listdir(app.config["UPLOAD_FOLDER"])
+    return models
 
-    proof_path = os.path.join("test.pf")
 
-    proof = ezkl.prove(
-        witness_path,
-        compiled_model_path,
-        pk_path,
-        proof_path,
-        "single",
-        srs_path,
-    )
-    print(proof)
-    assert os.path.isfile(proof_path)
+@app.route("/compile_prover", methods=["POST"])
+def compile_prover():
+    if "id" not in request.form:
+        return "No ID part"
+    id = request.form["id"]
 
-    # VERIFY IT
+    x = torch.tensor([[[1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0]]])
+    res = asyncio.run(cryptography.compile_prover(id, x.shape))
+    return res
 
-    res = ezkl.verify(
-        proof_path,
-        settings_path,
-        vk_path,
-        srs_path,
-    )
 
-    assert res == True
-    return {"proof": proof}
+@app.route("/prove_inference", methods=["POST"])
+def prove_inference():
+    if "id" not in request.form:
+        return "No ID part"
+    id = request.form["id"]
+
+    x = torch.tensor([[[1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0]]])
+    res = asyncio.run(cryptography.prove_inference(id, x))
+    return res
 
 
 if __name__ == "__main__":
-    res = asyncio.run(
-        compile_prover(
-            "12345",
-            torch.tensor([[[1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0]]]).shape,
-        )
-    )
-    print(res)
-
-    res = asyncio.run(
-        prove_inference(
-            "12345", torch.tensor([[[1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0]]])
-        )
-    )
-    print(res)
+    app.run(debug=True)
