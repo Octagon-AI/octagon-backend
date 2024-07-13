@@ -17,20 +17,21 @@ ETH_USDC_POOL_1 = "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640"
 ETH_USDT_POOL_1 = "0x11b815efb8f581194ae79006d24e0d814b7697f6"
 # ETH_USDT_POOL_2 = "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36"
 
-ETH_WBTC_POOL = "0x4585fe77225b41b697c938b018e2ac67ac5a20c0"
+# ETH_WBTC_POOL = "0x4585fe77225b41b697c938b018e2ac67ac5a20c0"
+
+# ETH_DAI_POOL = "0xC2e9F25Be6257c210d7Adf0D4Cd6E3E881ba25f8"
 
 POOL_IDS = [
     ETH_USDC_POOL_1,
     ETH_USDT_POOL_1,
-    ETH_WBTC_POOL,
 ]
-POOL_NAMES = ["ETH_USDC_1", "ETH_USDT_1", "ETH_WBTC"]
+POOL_NAMES = ["ETH_USDC_1", "ETH_USDT_1"]
 
 DURATION_DAYS = 100
 
 for pool_id, pool_name in zip(POOL_IDS, POOL_NAMES):
     pool_query = uniswap_v3.Query.pools(
-        where={"id": "0x11b815efb8f581194ae79006d24e0d814b7697f6"},
+        where={"id": pool_id},
     )
 
     pool_day_data = pool_query.poolDayData(first=DURATION_DAYS)
