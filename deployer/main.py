@@ -65,8 +65,10 @@ def deploy_contract(to_dir):
 
 def verify_contract(to_dir, contract_address):
     try:
-        command = f"cd {to_dir} && forge verify-contract --chain-id 11155111 --watch --etherscan-api-key {os.getenv("ETHERSCAN_API_KEY")} {contract_address} src/Verifier.sol:Halo2Verifier"
-        
+        # command = f"cd {to_dir} && forge verify-contract --chain-id 11155111 --watch --etherscan-api-key {os.getenv("ETHERSCAN_API_KEY")} {contract_address} src/Verifier.sol:Halo2Verifier"
+   
+        command = f"cd {to_dir} && forge verify-contract --chain-id 11155111 --verifier blockscout --watch --verifier-url https://eth-sepolia.blockscout.com/api {contract_address} src/Verifier.sol:Halo2Verifier"
+      
         # Run the command
         result = subprocess.run(
             command, shell=True, check=True, capture_output=True, text=True
